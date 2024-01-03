@@ -6,7 +6,6 @@ import { CreateRestaurantDto } from './dtos/create-restaurants.dto';
 export class RestaurantResolver {
   @Query((returns) => [Restaurant])
   restaurants(@Args('veganOnly') veganOnly: boolean): Restaurant[] {
-    console.log(veganOnly);
     return [];
   }
 
