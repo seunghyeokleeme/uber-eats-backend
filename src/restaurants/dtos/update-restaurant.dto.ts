@@ -1,10 +1,10 @@
-import { ArgsType, Field, InputType, PartialType } from '@nestjs/graphql';
+import { Field, InputType, PartialType } from '@nestjs/graphql';
 import { CreateRestaurantDto } from './create-restaurants.dto';
+import { ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 @InputType()
-export class UpdateRestaurantInputType extends PartialType(
-  CreateRestaurantDto,
-) {}
+class UpdateRestaurantInputType extends PartialType(CreateRestaurantDto) {}
 
 @InputType()
 export class UpdateRestaurantDto {
@@ -12,5 +12,7 @@ export class UpdateRestaurantDto {
   id: number;
 
   @Field((type) => UpdateRestaurantInputType)
+  @ValidateNested()
+  @Type(() => UpdateRestaurantInputType)
   data: UpdateRestaurantInputType;
 }
