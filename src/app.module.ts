@@ -30,7 +30,7 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'production',
-      logging: true,
+      logging: process.env.NODE_ENV !== 'production',
       entities: [Restaurant],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
