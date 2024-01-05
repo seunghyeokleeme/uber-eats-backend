@@ -52,7 +52,7 @@ export class UsersService {
         return { ok: false, error: '비밀번호가 틀립니다' };
       }
       const token = jwt.sign({ id: user.id }, this.config.get('SECRET_KEY'));
-      return { ok: true, token: 'allalalla' };
+      return { ok: true, token };
     } catch (error) {
       return {
         ok: false,
