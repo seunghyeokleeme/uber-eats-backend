@@ -14,17 +14,21 @@ export class UsersService {
     email,
     password,
     role,
-  }: CreateAccountInput): Promise<string | undefined> {
+  }: CreateAccountInput): Promise<{ ok: boolean; error?: string }> {
     try {
       const exists = await this.usersRepository.findOneBy({ email });
       if (exists) {
-        return '해당 이메일을 가진 사용자가 이미 존재합니다.';
+        return {
+          ok: false,
+          error: '해당 이메일을 가진 사용자가 이미 존재합니다.',
+        };
       }
       await this.usersRepository.save(
         this.usersRepository.create({ email, password, role }),
       );
+      return { ok: true };
     } catch (e) {
-      return '계정을 생성할 수 없습니다.';
+      return { ok: false, error: '계정을 생성할 수 없습니다.' };
     }
   }
 }
