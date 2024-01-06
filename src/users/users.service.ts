@@ -60,4 +60,8 @@ export class UsersService {
       };
     }
   }
+
+  async findById(id: number): Promise<User> {
+    return this.usersRepository.findOneBy({ id });
+  }
 }
