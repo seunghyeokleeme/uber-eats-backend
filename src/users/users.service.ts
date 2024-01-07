@@ -49,13 +49,22 @@ export class UsersService {
     password,
   }: LoginInput): Promise<{ ok: boolean; error?: string; token?: string }> {
     try {
-      const user = await this.usersRepository.findOneBy({ email });
+      const user = await this.usersRepository.findOne({
+        where: {
+          email,
+        },
+        select: {
+          id: true,
+          password: true,
+        },
+      });
       if (!user) {
         return {
           ok: false,
           error: '사용자를 찾을 수 없습니다.',
         };
       }
+      console.log(user);
       const passwordCorrect = await user.checkPassword(password);
       if (!passwordCorrect) {
         return { ok: false, error: '비밀번호가 틀립니다' };
@@ -95,18 +104,25 @@ export class UsersService {
   }
 
   async verifyEmail(code: string): Promise<boolean> {
-    const verification = await this.verificationsRepository.findOne({
-      where: {
-        code,
-      },
-      relations: {
-        user: true,
-      },
-    });
-    if (verification) {
-      verification.user.verified = true;
-      this.usersRepository.save(verification.user);
+    try {
+      const verification = await this.verificationsRepository.findOne({
+        where: {
+          code,
+        },
+        relations: {
+          user: true,
+        },
+      });
+      if (verification) {
+        verification.user.verified = true;
+        console.log(verification.user);
+        this.usersRepository.save(verification.user);
+        return true;
+      }
+      throw new Error();
+    } catch (e) {
+      console.log(e);
+      return false;
     }
-    return false;
   }
 }
