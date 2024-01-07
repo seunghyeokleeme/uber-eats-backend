@@ -2,7 +2,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { CreateAccountInput } from './dtos/create-account.dto';
+import {
+  CreateAccountInput,
+  CreateAccountOutput,
+} from './dtos/create-account.dto';
 import { LoginInput } from './dtos/login.dto';
 import { JwtService } from 'src/jwt/jwt.service';
 import { EditProfileInput } from './dtos/edit-profile.dto';
@@ -21,7 +24,7 @@ export class UsersService {
     email,
     password,
     role,
-  }: CreateAccountInput): Promise<{ ok: boolean; error?: string }> {
+  }: CreateAccountInput): Promise<CreateAccountOutput> {
     try {
       const exists = await this.usersRepository.findOneBy({ email });
       if (exists) {
