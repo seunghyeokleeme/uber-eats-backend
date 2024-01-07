@@ -8,7 +8,7 @@ import {
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { JwtService } from 'src/jwt/jwt.service';
-import { EditProfileInput } from './dtos/edit-profile.dto';
+import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { Verification } from './entities/verification.entity';
 import { UserProfileOutput } from './dtos/user-profile.dto';
 
@@ -99,21 +99,31 @@ export class UsersService {
   async editProfile(
     id: number,
     { email, password }: EditProfileInput,
-  ): Promise<User> {
-    const user = await this.usersRepository.findOneBy({ id });
-    if (email) {
-      user.email = email;
-      user.verified = false;
-      await this.verificationsRepository.save(
-        this.verificationsRepository.create({
-          user,
-        }),
-      );
+  ): Promise<EditProfileOutput> {
+    try {
+      const user = await this.usersRepository.findOneBy({ id });
+      if (email) {
+        user.email = email;
+        user.verified = false;
+        await this.verificationsRepository.save(
+          this.verificationsRepository.create({
+            user,
+          }),
+        );
+      }
+      if (password) {
+        user.password = password;
+      }
+      await this.usersRepository.save(user);
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: '프로필을 업데이트 할 수 없습니다',
+      };
     }
-    if (password) {
-      user.password = password;
-    }
-    return this.usersRepository.save(user);
   }
 
   async verifyEmail(code: string): Promise<boolean> {
