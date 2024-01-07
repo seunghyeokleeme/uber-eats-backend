@@ -11,6 +11,7 @@ import { JwtService } from 'src/jwt/jwt.service';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { Verification } from './entities/verification.entity';
 import { UserProfileOutput } from './dtos/user-profile.dto';
+import { VerifyEmailOutput } from './dtos/verify-email.dto';
 
 @Injectable()
 export class UsersService {
@@ -126,7 +127,7 @@ export class UsersService {
     }
   }
 
-  async verifyEmail(code: string): Promise<boolean> {
+  async verifyEmail(code: string): Promise<VerifyEmailOutput> {
     try {
       const verification = await this.verificationsRepository.findOne({
         where: {
@@ -138,14 +139,15 @@ export class UsersService {
       });
       if (verification) {
         verification.user.verified = true;
-        console.log(verification.user);
         this.usersRepository.save(verification.user);
-        return true;
+        return {
+          ok: true,
+        };
       }
-      throw new Error();
-    } catch (e) {
-      console.log(e);
-      return false;
+      return { ok: false, error: '인증을 찾지 못했습니다.' };
+    } catch (error) {
+      console.log(error);
+      return { ok: false, error };
     }
   }
 }
