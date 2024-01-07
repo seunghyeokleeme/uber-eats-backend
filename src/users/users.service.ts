@@ -6,7 +6,7 @@ import {
   CreateAccountInput,
   CreateAccountOutput,
 } from './dtos/create-account.dto';
-import { LoginInput } from './dtos/login.dto';
+import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { JwtService } from 'src/jwt/jwt.service';
 import { EditProfileInput } from './dtos/edit-profile.dto';
 import { Verification } from './entities/verification.entity';
@@ -47,10 +47,7 @@ export class UsersService {
     }
   }
 
-  async login({
-    email,
-    password,
-  }: LoginInput): Promise<{ ok: boolean; error?: string; token?: string }> {
+  async login({ email, password }: LoginInput): Promise<LoginOutput> {
     try {
       const user = await this.usersRepository.findOne({
         where: {
@@ -67,7 +64,6 @@ export class UsersService {
           error: '사용자를 찾을 수 없습니다.',
         };
       }
-      console.log(user);
       const passwordCorrect = await user.checkPassword(password);
       if (!passwordCorrect) {
         return { ok: false, error: '비밀번호가 틀립니다' };
