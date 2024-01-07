@@ -10,6 +10,7 @@ import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { JwtService } from 'src/jwt/jwt.service';
 import { EditProfileInput } from './dtos/edit-profile.dto';
 import { Verification } from './entities/verification.entity';
+import { UserProfileOutput } from './dtos/user-profile.dto';
 
 @Injectable()
 export class UsersService {
@@ -78,8 +79,21 @@ export class UsersService {
     }
   }
 
-  async findById(id: number): Promise<User> {
-    return this.usersRepository.findOneBy({ id });
+  async findById(id: number): Promise<UserProfileOutput> {
+    try {
+      const user = await this.usersRepository.findOneBy({ id });
+      if (user) {
+        return {
+          ok: true,
+          user,
+        };
+      }
+    } catch (error) {
+      return {
+        ok: false,
+        error: '해당 유저는 존재하지 않습니다',
+      };
+    }
   }
 
   async editProfile(
